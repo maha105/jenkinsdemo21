@@ -3,44 +3,30 @@ pipeline {
     agent any
 
     environment {
-        PATH = "C:\\Users\\Mahesh\\AppData\\Roaming\\npm;${env.PATH}"
         FIREBASE_TOKEN = credentials('firebase-token')
     }
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/maha105/jenkinsdemo21.git'
-            }
-        }
-
-        stage('Install Firebase CLI') {
+        stage('Install Firebase') {
             steps {
                 bat 'npm install -g firebase-tools'
             }
         }
 
-        stage('Check Firebase Version') {
+        stage('Deploy') {
             steps {
-                bat 'firebase --version'
-            }
-        }
-
-        stage('Deploy to Firebase') {
-            steps {
-                bat 'firebase deploy --non-interactive --token %FIREBASE_TOKEN%'
+                bat 'npx firebase-tools deploy --non-interactive --token %FIREBASE_TOKEN%'
             }
         }
     }
 
     post {
         success {
-            echo 'Deployment Successful to Firebase Hosting'
+            echo 'Deployment Successful'
         }
-
         failure {
-            echo 'Deployment Failed - Check Logs'
+            echo 'Deployment Failed'
         }
     }
 }
